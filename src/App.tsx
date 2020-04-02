@@ -171,7 +171,7 @@ class App extends React.Component<AppProps, AppStates> {
                     height={400}
                     data={displaydata}
                     margin={{
-                        top: 5,
+                        top: 20,
                         right: 30,
                         left: 20,
                         bottom: 5
@@ -183,7 +183,7 @@ class App extends React.Component<AppProps, AppStates> {
                     <YAxis />
                     <Tooltip />
                     <Legend />
-                    <Bar dataKey="value" fill="#8884d8" onClick={this.handlechartClick} />
+                    <Bar dataKey="value" fill="#8884d8" onClick={this.handlechartClick}  label={{ position: 'top' }}/>
                 </BarChart>
 
                 <p>{this.state.description}</p>

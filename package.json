@@ -8,7 +8,6 @@
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
-    "electron-builder": "^22.4.1",
     "react": "^16.13.1",
     "react-chart-histogram": "^0.2.4",
     "react-dom": "^16.13.1",
@@ -41,6 +40,23 @@
   },
   "devDependencies": {
     "@types/recharts": "^1.8.9",
-    "electron": "^8.2.0"
+    "electron": "^8.2.0",
+    "electron-builder": "^22.4.0"
+  },
+  "build": {
+    "appId": "com.yuanlin.reco",
+    "productName": "統計程式",
+    "directories": {
+      "output": "build"
+    },
+    "mac": {
+      "icon": "icon.png"
+    },
+    "win": {
+      "icon": "icon.png"
+    },
+    "linux": {
+      "icon": "icon.png"
+    }
   }
 }
