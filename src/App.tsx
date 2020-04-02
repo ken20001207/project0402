@@ -22,22 +22,30 @@ interface game {
 
 function toArray(lines: Array<string>) {
     return new Promise<Array<game>>(resolve => {
-        var datas = new Array<game>();
-        lines.forEach(line => {
-            if (line[0] !== ",") {
-                var game: game = { id: 0, result: [], date: 0 };
-                game.date = +line
-                    .split(",")[0]
-                    .replace("/", "")
-                    .replace("/", "");
-                game.id = +line.split(",")[1];
-                for (var i = 0; i < 10; i++) {
-                    game.result.push(+line.split(",")[2 + i]);
+        try {
+            var datas = new Array<game>();
+            lines.forEach(line => {
+                if (line[0] !== ",") {
+                    var game: game = { id: 0, result: [], date: 0 };
+                    var date = line.split(",")[0];
+                    if (date.includes("/")) {
+                        if (+date.split("/")[1] < 9) date = date.split("/")[0] + "/0" + date.split("/")[1] + "/" + date.split("/")[2];
+                        if (+date.split("/")[2] < 9) date = date.split("/")[0] + "/" + date.split("/")[1] + "/0" + date.split("/")[2];
+                        game.date = +date.replace("/", "").replace("/", "");
+                    } else {
+                        game.date = +date.replace("-", "").replace("-", "");
+                    }
+                    game.id = +line.split(",")[1];
+                    for (var i = 0; i < 10; i++) {
+                        game.result.push(+line.split(",")[2 + i]);
+                    }
+                    if (game.id > 0) datas.push(game);
                 }
-                datas.push(game);
-            }
-        });
-        resolve(datas);
+            });
+            resolve(datas);
+        } catch (err) {
+            alert("輸入的檔案格式有問題!");
+        }
     });
 }
 
@@ -61,7 +69,7 @@ class App extends React.Component<AppProps, AppStates> {
             if (e.target === null) return;
             const text = e.target.result as string;
             var data = await toArray(text.split("\n"));
-            this.setState({ data: data, fromdate: data[data.length - 1].date, todate: data[0].date });
+            this.setState({ data: data, fromdate: data[data.length - 1].date, todate: data[0].date, from: data[data.length - 1].id, to: data[0].id });
         };
         if (e.target.files === null) return;
         reader.readAsText(e.target.files[0]);
@@ -102,9 +110,7 @@ class App extends React.Component<AppProps, AppStates> {
         this.state.data.forEach(data => {
             if (
                 (data.date > this.state.fromdate && data.date < this.state.todate) ||
-                ((data.date === this.state.todate || data.date === this.state.fromdate) &&
-                    data.id >= this.state.from &&
-                    data.id <= this.state.to)
+                ((data.date === this.state.todate || data.date === this.state.fromdate) && data.id >= this.state.from && data.id <= this.state.to)
             ) {
                 if (data.result[this.state.no - 1] === index + 1) gamesid.push(<p>{data.date + "第" + data.id + "場"}</p>);
             }
@@ -132,9 +138,7 @@ class App extends React.Component<AppProps, AppStates> {
         this.state.data.forEach(data => {
             if (
                 (data.date > this.state.fromdate && data.date < this.state.todate) ||
-                ((data.date === this.state.todate || data.date === this.state.fromdate) &&
-                    data.id >= this.state.from &&
-                    data.id <= this.state.to)
+                ((data.date === this.state.todate || data.date === this.state.fromdate) && data.id >= this.state.from && data.id <= this.state.to)
             ) {
                 displaydata[data.result[this.state.no - 1] - 1].value++;
             }
@@ -183,7 +187,7 @@ class App extends React.Component<AppProps, AppStates> {
                     <YAxis />
                     <Tooltip />
                     <Legend />
-                    <Bar dataKey="value" fill="#8884d8" onClick={this.handlechartClick}  label={{ position: 'top' }}/>
+                    <Bar dataKey="value" fill="#8884d8" onClick={this.handlechartClick} label={{ position: "top" }} />
                 </BarChart>
 
                 <p>{this.state.description}</p>
